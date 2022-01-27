@@ -1,5 +1,7 @@
 package com.pkjohn.jhparkweb.springboot.web;
 
+import com.pkjohn.jhparkweb.springboot.config.auth.LoginUser;
+import com.pkjohn.jhparkweb.springboot.config.auth.dto.SessionUser;
 import com.pkjohn.jhparkweb.springboot.service.posts.PostsService;
 import com.pkjohn.jhparkweb.springboot.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -8,15 +10,23 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpSession;
+
 @RequiredArgsConstructor
 @Controller
 public class IndexContoroller {
 
     private final PostsService postsService;
+//  private final HttpSession httpSession;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(Model model, @LoginUser SessionUser user) {
+//      @LoginUser -> SessionUser user = (SessionUser) httpSession.getAttribute("user"); 코드의 반복을 줄이기 위해 어노테이션 만듬
         model.addAttribute("posts", postsService.findAllDesc());
+
+        if(user != null) {
+            model.addAttribute("userName", user.getName());
+        }
         return "index";
         //머스테치 스타터 덕분에 컨트롤러에서 문자열을 반환할 때 앞의 경로와 뒤의 파일 확장자는 자동으로 지정됌.
         //앞의 경로는 src/main/resources/templates

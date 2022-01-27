@@ -1,9 +1,13 @@
 package com.pkjohn.jhparkweb.springboot.web;
 
+import com.pkjohn.jhparkweb.springboot.config.auth.SecurityConfig;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,14 +15,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.hamcrest.Matchers.is;
-
-@RunWith(SpringRunner.class) //스프링부트테스트와 JUnit 사이에 연결자 역할, JUnit에 내장된 실행자 외에 다른 실행자 실행
-@WebMvcTest(controllers = HelloController.class) // Web(Spring MVC)에 집중할 수 있는 어노테이션, 선언 시 @Controller, @ControllerAdvice등을 사용가능, @Service, @Component, @Repository 사용 못함, 여기선 컨트롤러만 사용하기때문에 선언
+/*
+    스프링부트테스트와 JUnit 사이에 연결자 역할, JUnit에 내장된 실행자 외에 다른 실행자 실행
+    Web(Spring MVC)에 집중할 수 있는 어노테이션, 선언 시 @Controller, @ControllerAdvice등을 사용가능,
+    @Service, @Component, @Repository 사용 못함, 여기선 컨트롤러만 사용하기때문에 선언
+ */
+@RunWith(SpringRunner.class)
+@WebMvcTest(controllers = HelloController.class, excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
+        classes = SecurityConfig.class)
+        }
+)
+/*
+    @WebMvcTest는 WebSecurityConfigurerAdapter, WebMvcConfigurer를 비롯한 @ControllerAdvice, @Controller를 읽음
+    즉, @Repository, @Service, @Component는 스캔대상이 아니다.
+    언제 삭제될지 모르니 사용하지 않는 걸 추천?..
+ */
 public class HelloControllerTest {
 
     @Autowired
     private MockMvc mvc; // 웹 api를 테스트할 때 사용, 스프링mvc 테스트의 시작점, 이 클래스를 통해 http get, post 등에 대한 api 테스트 가능
 
+    @WithMockUser(roles = "USER")
     @Test
     public void hello가_리턴된다() throws Exception {
         String hello = "hello";
@@ -28,6 +46,7 @@ public class HelloControllerTest {
                 .andExpect(content().string(hello)); //응답 본문의 내용을 검증, Controller에서 "hello"를 리턴하기 때문에 값이 맞는 지 검증
     }
 
+    @WithMockUser(roles = "USER")
     @Test
     public void helloDto가_리턴된다() throws Exception {
         String name = "hello";
