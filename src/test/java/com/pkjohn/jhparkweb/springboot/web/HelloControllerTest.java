@@ -52,7 +52,7 @@ public class HelloControllerTest {
         String name = "hello";
         int amount = 1000;
 
-        mvc.perform(get("/hello/dto)")
+        mvc.perform(get("/hello/dto")
                 .param("name", name)
                 .param("amount", String.valueOf(amount))) //param은 문자열만 받는다. 따라서 valueOf로 문자열로 전환
                 .andExpect(status().isOk())
