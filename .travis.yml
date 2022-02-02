@@ -5,12 +5,16 @@ jdk:
 branches:
   only:
     - master
+# /home/travis/.travis/functions: line 351: ./gradlew: Permission denied 에러 수정
+before_install:
+  - chmod +x gradlew
 
 # Travis CI 서버의 HOME
 cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.gradle'
+
 script: "./gradlew clean build"
 
 # CI 실행 완료 시 메일로 알람
