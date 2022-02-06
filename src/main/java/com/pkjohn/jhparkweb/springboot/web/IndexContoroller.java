@@ -37,7 +37,7 @@ public class IndexContoroller {
 
     @GetMapping("/posts/save")
     public String postsSave() {
-        return "/posts/posts-save";
+        return "posts-save";
     }
 
     @GetMapping("/posts/update/{id}")
@@ -45,6 +45,6 @@ public class IndexContoroller {
         PostsResponseDto dto = postsService.findById(id);
         model.addAttribute("posts", dto);
 
-        return "/posts/posts-update";
+        return "posts-update";
     }
 }

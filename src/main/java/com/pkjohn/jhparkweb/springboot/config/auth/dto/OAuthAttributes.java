@@ -80,7 +80,7 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(Role.GUEST)
+                .role(Role.USER)    //현재(220206) 로그인 세션 정보를 못읽어오므로 바꿈..
                 .build();
     }
     /*
